@@ -34,6 +34,7 @@ android {
         jvmTarget = "11"
     }
 
+    //rofl
     viewBinding {
         enable = true
     }
