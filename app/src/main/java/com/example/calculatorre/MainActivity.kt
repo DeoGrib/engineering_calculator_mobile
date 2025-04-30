@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnEqual.setOnClickListener {
             try {
-
+                fuckingCalculating()
             } catch (e: Exception) {
                 Log.d("Ошибка", "Сообщение: ${e.message}")
             }
@@ -81,5 +81,19 @@ class MainActivity : AppCompatActivity() {
             binding.resultText.text = ""
         }
         binding.mathOperation.text.insert(pos, str)
+    }
+
+    fun fuckingCalculating() {
+        var str = binding.mathOperation.text.toString()
+        if (str.isNotEmpty()) {
+            while (str.contains("(")) {
+
+            }
+            
+        }
+    }
+
+    fun processingBrackets(str: String) {
+
     }
 }
