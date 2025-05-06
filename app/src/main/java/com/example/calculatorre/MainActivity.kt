@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnSqr1.setOnClickListener { setTextFields("^-1") }
         binding.btnSqr2.setOnClickListener { setTextFields("^2") }
         binding.btnSqr3.setOnClickListener { setTextFields("^3") }
-        binding.btnRadical.setOnClickListener { setTextFields("√") }
-        binding.btnRadical3.setOnClickListener { setTextFields("3√") }
-        binding.btnRadicalX.setOnClickListener { setTextFields("()√") }
+        binding.btnRadical.setOnClickListener { setTextFields(" √") }
+        binding.btnRadical3.setOnClickListener { setTextFields(" 3√") }
+        binding.btnRadicalX.setOnClickListener { setTextFields(" ()√") }
         binding.btnFactorial.setOnClickListener { setTextFields("!") }
         binding.btnPi.setOnClickListener { setTextFields("π") }
         binding.btnE.setOnClickListener { setTextFields("e^") }
@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnSin.setOnClickListener { setTextFields("sin ") }
         binding.btnCos.setOnClickListener { setTextFields("cos ") }
         binding.btnTan.setOnClickListener { setTextFields("tan ") }
-        binding.btnSin1.setOnClickListener { setTextFields("sin^-1 ") }
-        binding.btnCos1.setOnClickListener { setTextFields("cos^-1 ") }
-        binding.btnTan1.setOnClickListener { setTextFields("tan^-1 ") }
+        binding.btnSin1.setOnClickListener { setTextFields("sin⁻¹ ") }
+        binding.btnCos1.setOnClickListener { setTextFields("cos⁻¹ ") }
+        binding.btnTan1.setOnClickListener { setTextFields("tan⁻¹ ") }
 
         binding.btnAc.setOnClickListener {
             binding.mathOperation.text.clear()
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnEqual.setOnClickListener {
             try {
-                fuckingCalculating()
+                binding.resultText.text = fuckingCalculating()
             } catch (e: Exception) {
                 Log.d("Ошибка", "Сообщение: ${e.message}")
             }
@@ -83,17 +83,28 @@ class MainActivity : AppCompatActivity() {
         binding.mathOperation.text.insert(pos, str)
     }
 
-    fun fuckingCalculating() {
+    fun fuckingCalculating() : String {
         var str = binding.mathOperation.text.toString()
         if (str.isNotEmpty()) {
+            str = str.replace("π", Math.PI.toString())
+            str = str.replace("e", Math.E.toString())
             while (str.contains("(")) {
-
+                val closeIndex = str.indexOf(")")
+                val openIndex = str.substring(0, closeIndex).lastIndexOf("(")
+                if (openIndex == -1) {
+                    return "Некорректные скобки"
+                }
+                val inner = str.substring(openIndex + 1, closeIndex)
+                val innerResult = simpleCalculating(inner)
+                str = str.substring(0, openIndex) + innerResult + str.substring(closeIndex + 1)
             }
-            
+            return simpleCalculating(str)
+        } else {
+            return ""
         }
     }
 
-    fun processingBrackets(str: String) {
-
+    fun simpleCalculating(str: String) : String {
+        return ""
     }
 }
