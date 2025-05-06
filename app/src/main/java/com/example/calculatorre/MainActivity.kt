@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.calculatorre.databinding.ActivityMainBinding
+import net.objecthunter.exp4j.ExpressionBuilder
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,16 +67,16 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnEqual.setOnClickListener {
             try {
-                binding.resultText.text = fuckingCalculating()
+                binding.resultText.text = calculateExpression()
             } catch (e: Exception) {
                 Log.d("Ошибка", "Сообщение: ${e.message}")
             }
         }
     }
 
-
+    // Вставляем символы в строку ввода
     fun setTextFields(str: String) {
-        val pos = binding.mathOperation.selectionStart;
+        val pos = binding.mathOperation.selectionStart
         if (binding.resultText.text != "") {
             binding.mathOperation.setText(binding.resultText.text)
             binding.resultText.text = ""
@@ -83,28 +84,36 @@ class MainActivity : AppCompatActivity() {
         binding.mathOperation.text.insert(pos, str)
     }
 
-    fun fuckingCalculating() : String {
-        var str = binding.mathOperation.text.toString()
-        if (str.isNotEmpty()) {
-            str = str.replace("π", Math.PI.toString())
-            str = str.replace("e", Math.E.toString())
-            while (str.contains("(")) {
-                val closeIndex = str.indexOf(")")
-                val openIndex = str.substring(0, closeIndex).lastIndexOf("(")
-                if (openIndex == -1) {
-                    return "Некорректные скобки"
-                }
-                val inner = str.substring(openIndex + 1, closeIndex)
-                val innerResult = simpleCalculating(inner)
-                str = str.substring(0, openIndex) + innerResult + str.substring(closeIndex + 1)
-            }
-            return simpleCalculating(str)
-        } else {
-            return ""
-        }
-    }
+    // Основная логика вычислений
+    fun calculateExpression(): String {
+        var expression = binding.mathOperation.text.toString()
 
-    fun simpleCalculating(str: String) : String {
-        return ""
+        // Заменяем "π" и "e" на значения
+        expression = expression.replace("π", Math.PI.toString())
+        expression = expression.replace("e", Math.E.toString())
+
+        // Заменяем операторы на те, что поддерживает exp4j
+        expression = expression.replace("×", "*")
+            .replace("÷", "/")
+            .replace("√", "sqrt")
+            .replace("asin", "Math.asin")
+            .replace("acos", "Math.acos")
+            .replace("atan", "Math.atan")
+            .replace("log", "Math.log10")
+            .replace("ln", "Math.log")
+            .replace("sin", "Math.sin")
+            .replace("cos", "Math.cos")
+            .replace("tan", "Math.tan")
+            .replace("!", "fact")
+
+        // Строим и вычисляем выражение с помощью exp4j
+        try {
+            val expressionBuilder = ExpressionBuilder(expression).build()
+            val result = expressionBuilder.evaluate()
+            return result.toString()
+        } catch (e: Exception) {
+            Log.d("CalcError", "Ошибка: ${e.message}")
+            return "Ошибка"
+        }
     }
 }
