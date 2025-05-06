@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnRadicalX.setOnClickListener { setTextFields(" ()√") }
         binding.btnFactorial.setOnClickListener { setTextFields("!") }
         binding.btnPi.setOnClickListener { setTextFields("π") }
-        binding.btnE.setOnClickListener { setTextFields("e^") }
+        binding.btnE.setOnClickListener { setTextFields("e") }
         binding.btnLog.setOnClickListener { setTextFields("log ") }
         binding.btnLn.setOnClickListener { setTextFields("ln ") }
         binding.btnSin.setOnClickListener { setTextFields("sin ") }
@@ -88,32 +88,79 @@ class MainActivity : AppCompatActivity() {
     fun calculateExpression(): String {
         var expression = binding.mathOperation.text.toString()
 
-        // Заменяем "π" и "e" на значения
+        // Замена символов на машинно-понятные
         expression = expression.replace("π", Math.PI.toString())
-        expression = expression.replace("e", Math.E.toString())
-
-        // Заменяем операторы на те, что поддерживает exp4j
-        expression = expression.replace("×", "*")
+            .replace("e", Math.E.toString())
+            .replace("×", "*")
             .replace("÷", "/")
+            .replace("–", "-")
+            .replace("sin⁻¹", "asin")
+            .replace("cos⁻¹", "acos")
+            .replace("tan⁻¹", "atan")
             .replace("√", "sqrt")
-            .replace("asin", "Math.asin")
-            .replace("acos", "Math.acos")
-            .replace("atan", "Math.atan")
-            .replace("log", "Math.log10")
-            .replace("ln", "Math.log")
-            .replace("sin", "Math.sin")
-            .replace("cos", "Math.cos")
-            .replace("tan", "Math.tan")
-            .replace("!", "fact")
+            .replace(" ", "")
 
-        // Строим и вычисляем выражение с помощью exp4j
-        try {
-            val expressionBuilder = ExpressionBuilder(expression).build()
-            val result = expressionBuilder.evaluate()
-            return result.toString()
+        // Обработка корня n-ной степени: 3√8 → 8^(1/3)
+        val nthRootRegex = Regex("\\d+√\\d+")
+        while (nthRootRegex.containsMatchIn(expression)) {
+            expression = nthRootRegex.replace(expression) {
+                val n = it.groupValues[1].toDouble()
+                val radicand = it.groupValues[2]
+                "($radicand^(1/$n))"
+            }
+        }
+
+        // Обработка факториала: 5! → 120
+        val factorialRegex = Regex("(\\d+(?:\\.\\d*)?)!")
+        while (factorialRegex.containsMatchIn(expression)) {
+            expression = factorialRegex.replace(expression) {
+                val num = it.groupValues[1].toDouble()
+                if (num % 1 != 0.0) return@replace "Ошибка"
+                val fact = (1..num.toInt()).fold(1L) { acc, i -> acc * i }
+                fact.toString()
+            }
+        }
+
+        // Кастомные функции
+        val log10 = object : net.objecthunter.exp4j.function.Function("log10", 1) {
+            override fun apply(vararg args: Double): Double = Math.log10(args[0])
+        }
+
+        val ln = object : net.objecthunter.exp4j.function.Function("ln", 1) {
+            override fun apply(vararg args: Double): Double = Math.log(args[0])
+        }
+
+        // Тригонометрические функции в градусах
+        val trigFunctions = listOf(
+            object : net.objecthunter.exp4j.function.Function("sin", 1) {
+                override fun apply(vararg args: Double): Double = Math.sin(Math.toRadians(args[0]))
+            },
+            object : net.objecthunter.exp4j.function.Function("cos", 1) {
+                override fun apply(vararg args: Double): Double = Math.cos(Math.toRadians(args[0]))
+            },
+            object : net.objecthunter.exp4j.function.Function("tan", 1) {
+                override fun apply(vararg args: Double): Double = Math.tan(Math.toRadians(args[0]))
+            },
+            object : net.objecthunter.exp4j.function.Function("asin", 1) {
+                override fun apply(vararg args: Double): Double = Math.toDegrees(Math.asin(args[0]))
+            },
+            object : net.objecthunter.exp4j.function.Function("acos", 1) {
+                override fun apply(vararg args: Double): Double = Math.toDegrees(Math.acos(args[0]))
+            },
+            object : net.objecthunter.exp4j.function.Function("atan", 1) {
+                override fun apply(vararg args: Double): Double = Math.toDegrees(Math.atan(args[0]))
+            }
+        )
+
+        return try {
+            val builder = ExpressionBuilder(expression)
+                .functions(log10, ln)
+                .functions(trigFunctions)
+            val result = builder.build().evaluate()
+            result.toString()
         } catch (e: Exception) {
             Log.d("CalcError", "Ошибка: ${e.message}")
-            return "Ошибка"
+            "Ошибка"
         }
     }
 }
