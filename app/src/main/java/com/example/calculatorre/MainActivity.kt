@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.calculatorre.databinding.ActivityMainBinding
 import net.objecthunter.exp4j.ExpressionBuilder
+import kotlin.math.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Кнопки
         binding.btn0.setOnClickListener { setTextFields("0") }
         binding.btn1.setOnClickListener { setTextFields("1") }
         binding.btn2.setOnClickListener { setTextFields("2") }
@@ -58,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             binding.mathOperation.text.clear()
             binding.resultText.text = ""
         }
+
         binding.btnDel.setOnClickListener {
             val str = binding.mathOperation.text.toString()
             if (str.isNotEmpty()) {
@@ -74,7 +77,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Вставляем символы в строку ввода
     fun setTextFields(str: String) {
         val pos = binding.mathOperation.selectionStart
         if (binding.resultText.text != "") {
@@ -84,7 +86,11 @@ class MainActivity : AppCompatActivity() {
         binding.mathOperation.text.insert(pos, str)
     }
 
-    // Основная логика вычислений
+    fun roundTo(value: Double, places: Int = 10): Double {
+        val scale = 10.0.pow(places)
+        return round(value * scale) / scale
+    }
+
     fun calculateExpression(): String {
         var expression = binding.mathOperation.text.toString()
 
@@ -100,11 +106,26 @@ class MainActivity : AppCompatActivity() {
             .replace("√", "sqrt")
             .replace(" ", "")
 
-        // Обработка корня n-ной степени: 3√8 → 8^(1/3)
-        val nthRootRegex = Regex("\\d+√\\d+")
+        // Обработка унарного минуса в тригонометрических функциях: sin-30 → sin(-30)
+        val unaryMinusFunctionRegex = Regex("(sin|cos|tan|asin|acos|atan|ln|log10)\\-([\\d(])")
+        expression = unaryMinusFunctionRegex.replace(expression) {
+            val func = it.groupValues[1]
+            val arg = it.groupValues[2]
+            "$func(-$arg"
+        }
+
+        // Закрываем скобки для функций, если они не закрыты
+        val unaryFunctionFix = Regex("(?<func>sin|cos|tan|asin|acos|atan|ln|log10)\\((-?[\\d.]+)\\)")
+        expression = unaryFunctionFix.replace(expression) {
+            "${it.groups["func"]!!.value}(${it.groupValues[2]})"
+        }
+
+        // Обработка корня n-ной степени: 3√-8 → (-8)^(1/3)
+        val nthRootRegex = Regex("((?:-?\\d+(?:\\.\\d*)?)|\\(-?\\d+(?:\\.\\d*)?\\))sqrt((?:-?\\d+(?:\\.\\d*)?)|\\([^()]+\\))")
         while (nthRootRegex.containsMatchIn(expression)) {
             expression = nthRootRegex.replace(expression) {
-                val n = it.groupValues[1].toDouble()
+                val rawN = it.groupValues[1].removeSurrounding("(", ")")
+                val n = rawN.toDouble()
                 val radicand = it.groupValues[2]
                 "($radicand^(1/$n))"
             }
@@ -121,34 +142,41 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Баланс скобок: добавляем недостающие закрывающие скобки
+        val openCount = expression.count { it == '(' }
+        val closeCount = expression.count { it == ')' }
+        if (openCount > closeCount) {
+            expression += ")".repeat(openCount - closeCount)
+        }
+
         // Кастомные функции
         val log10 = object : net.objecthunter.exp4j.function.Function("log10", 1) {
-            override fun apply(vararg args: Double): Double = Math.log10(args[0])
+            override fun apply(vararg args: Double): Double = log10(args[0])
         }
 
         val ln = object : net.objecthunter.exp4j.function.Function("ln", 1) {
-            override fun apply(vararg args: Double): Double = Math.log(args[0])
+            override fun apply(vararg args: Double): Double = ln(args[0])
         }
 
-        // Тригонометрические функции в градусах
+        // Тригонометрические функции в градусах, с округлением результата
         val trigFunctions = listOf(
             object : net.objecthunter.exp4j.function.Function("sin", 1) {
                 override fun apply(vararg args: Double): Double = Math.sin(Math.toRadians(args[0]))
             },
             object : net.objecthunter.exp4j.function.Function("cos", 1) {
-                override fun apply(vararg args: Double): Double = Math.cos(Math.toRadians(args[0]))
+                override fun apply(vararg args: Double): Double = "%.10f".format(cos(Math.toRadians(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("tan", 1) {
-                override fun apply(vararg args: Double): Double = Math.tan(Math.toRadians(args[0]))
+                override fun apply(vararg args: Double): Double = "%.10f".format(tan(Math.toRadians(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("asin", 1) {
-                override fun apply(vararg args: Double): Double = Math.toDegrees(Math.asin(args[0]))
+                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(asin(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("acos", 1) {
-                override fun apply(vararg args: Double): Double = Math.toDegrees(Math.acos(args[0]))
+                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(acos(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("atan", 1) {
-                override fun apply(vararg args: Double): Double = Math.toDegrees(Math.atan(args[0]))
+                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(atan(args[0]))).toDouble()
             }
         )
 
@@ -157,10 +185,14 @@ class MainActivity : AppCompatActivity() {
                 .functions(log10, ln)
                 .functions(trigFunctions)
             val result = builder.build().evaluate()
-            result.toString()
+
+            // Отображать как целое, если результат без остатка
+            if (result % 1 == 0.0) result.toLong().toString()
+            else "%.10f".format(result).trimEnd('0').trimEnd('.')
         } catch (e: Exception) {
             Log.d("CalcError", "Ошибка: ${e.message}")
             "Ошибка"
         }
     }
+
 }
