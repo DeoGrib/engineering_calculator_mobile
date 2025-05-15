@@ -289,7 +289,7 @@
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_x10"
-                android:text="×10ˣ" />
+                android:text="Deg" />
 
             <TextView
                 style="@style/ActionButton"
