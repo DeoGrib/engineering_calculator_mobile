@@ -11,6 +11,7 @@ import kotlin.math.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var isDegrees = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnDiv.setOnClickListener { setTextFields("÷") }
         binding.btnOpen.setOnClickListener { setTextFields("(") }
         binding.btnClose.setOnClickListener { setTextFields(")") }
-        binding.btnX10.setOnClickListener { setTextFields("×10^") }
         binding.btnSqr.setOnClickListener { setTextFields("^") }
         binding.btnSqr1.setOnClickListener { setTextFields("^-1") }
         binding.btnSqr2.setOnClickListener { setTextFields("^2") }
@@ -55,6 +55,11 @@ class MainActivity : AppCompatActivity() {
         binding.btnSin1.setOnClickListener { setTextFields("sin⁻¹ ") }
         binding.btnCos1.setOnClickListener { setTextFields("cos⁻¹ ") }
         binding.btnTan1.setOnClickListener { setTextFields("tan⁻¹ ") }
+
+        binding.btnX10.setOnClickListener {
+            isDegrees = !isDegrees
+            binding.btnX10.text = if (isDegrees) "Deg" else "Rad"
+        }
 
         binding.btnAc.setOnClickListener {
             binding.mathOperation.text.clear()
@@ -161,22 +166,28 @@ class MainActivity : AppCompatActivity() {
         // Тригонометрические функции в градусах, с округлением результата
         val trigFunctions = listOf(
             object : net.objecthunter.exp4j.function.Function("sin", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(sin(Math.toRadians(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) sin(Math.toRadians(args[0])) else sin(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("cos", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(cos(Math.toRadians(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) cos(Math.toRadians(args[0])) else cos(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("tan", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(tan(Math.toRadians(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) tan(Math.toRadians(args[0])) else tan(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("asin", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(asin(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) Math.toDegrees(asin(args[0])) else asin(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("acos", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(acos(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) Math.toDegrees(acos(args[0])) else acos(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("atan", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(atan(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) Math.toDegrees(atan(args[0])) else atan(args[0])
             }
         )
 
