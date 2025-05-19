@@ -108,6 +108,7 @@ class MainActivity : AppCompatActivity() {
             .replace("sin⁻¹", "asin")
             .replace("cos⁻¹", "acos")
             .replace("tan⁻¹", "atan")
+            .replace("log", "log10")
             .replace("√", "sqrt")
             .replace(" ", "")
 
@@ -125,14 +126,14 @@ class MainActivity : AppCompatActivity() {
             "${it.groups["func"]!!.value}(${it.groupValues[2]})"
         }
 
-        // Обработка корня n-ной степени: 3√-8 → (-8)^(1/3)
+        // Обработка корня n-ной степени: 3√-8 → root(3,-8)
         val nthRootRegex = Regex("((?:-?\\d+(?:\\.\\d*)?)|\\(-?\\d+(?:\\.\\d*)?\\))sqrt((?:-?\\d+(?:\\.\\d*)?)|\\([^()]+\\))")
         while (nthRootRegex.containsMatchIn(expression)) {
             expression = nthRootRegex.replace(expression) {
                 val rawN = it.groupValues[1].removeSurrounding("(", ")")
                 val n = rawN.toDouble()
                 val radicand = it.groupValues[2]
-                "($radicand^(1/$n))"
+                "root($n,$radicand)"
             }
         }
 
@@ -161,6 +162,19 @@ class MainActivity : AppCompatActivity() {
 
         val ln = object : net.objecthunter.exp4j.function.Function("ln", 1) {
             override fun apply(vararg args: Double): Double = ln(args[0])
+        }
+
+        // Кастомная функция root(n,x), корректно обрабатывающая отрицательные значения при нечётных n
+        val root = object : net.objecthunter.exp4j.function.Function("root", 2) {
+            override fun apply(vararg args: Double): Double {
+                val n = args[0]
+                val x = args[1]
+                return if (n % 2 == 1.0 && x < 0) {
+                    -((-x).pow(1.0 / n))
+                } else {
+                    x.pow(1.0 / n)
+                }
+            }
         }
 
         // Тригонометрические функции в градусах, с округлением результата
@@ -195,6 +209,8 @@ class MainActivity : AppCompatActivity() {
             val builder = ExpressionBuilder(expression)
                 .functions(log10, ln)
                 .functions(trigFunctions)
+                .function(root)
+
             val result = builder.build().evaluate()
 
             // Отображать как целое, если результат без остатка
@@ -205,5 +221,4 @@ class MainActivity : AppCompatActivity() {
             "Ошибка"
         }
     }
-
 }
