@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Кнопки
         binding.btn0.setOnClickListener { setTextFields("0") }
         binding.btn1.setOnClickListener { setTextFields("1") }
         binding.btn2.setOnClickListener { setTextFields("2") }
@@ -47,14 +46,14 @@ class MainActivity : AppCompatActivity() {
         binding.btnFactorial.setOnClickListener { setTextFields("!") }
         binding.btnPi.setOnClickListener { setTextFields("π") }
         binding.btnE.setOnClickListener { setTextFields("e") }
-        binding.btnLog.setOnClickListener { setTextFields("log ") }
-        binding.btnLn.setOnClickListener { setTextFields("ln ") }
-        binding.btnSin.setOnClickListener { setTextFields("sin ") }
-        binding.btnCos.setOnClickListener { setTextFields("cos ") }
-        binding.btnTan.setOnClickListener { setTextFields("tan ") }
-        binding.btnSin1.setOnClickListener { setTextFields("sin⁻¹ ") }
-        binding.btnCos1.setOnClickListener { setTextFields("cos⁻¹ ") }
-        binding.btnTan1.setOnClickListener { setTextFields("tan⁻¹ ") }
+        binding.btnLog.setOnClickListener { setTextFields("log") }
+        binding.btnLn.setOnClickListener { setTextFields("ln") }
+        binding.btnSin.setOnClickListener { setTextFields("sin") }
+        binding.btnCos.setOnClickListener { setTextFields("cos") }
+        binding.btnTan.setOnClickListener { setTextFields("tan") }
+        binding.btnSin1.setOnClickListener { setTextFields("sin⁻¹") }
+        binding.btnCos1.setOnClickListener { setTextFields("cos⁻¹") }
+        binding.btnTan1.setOnClickListener { setTextFields("tan⁻¹") }
 
         binding.btnX10.setOnClickListener {
             isDegrees = !isDegrees
@@ -71,9 +70,25 @@ class MainActivity : AppCompatActivity() {
             val text = binding.mathOperation.text
 
             if (pos > 0 && text.isNotEmpty()) {
-                text.delete(pos - 1, pos)
+                val input = text.toString()
+                val beforeCursor = input.substring(0, pos)
+
+                // Список функций/операций, которые нужно удалять целиком
+                val functions = listOf(
+                    "sin⁻¹", "cos⁻¹", "tan⁻¹", "log", "ln", "sin", "cos", "tan", "3√", "()√"
+                )
+
+                // Проверяем, заканчивается ли строка перед курсором на какую-либо из этих функций
+                val match = functions.firstOrNull { beforeCursor.endsWith(it) }
+
+                if (match != null) {
+                    text.delete(pos - match.length, pos)
+                } else {
+                    text.delete(pos - 1, pos)
+                }
             }
         }
+
 
 
         binding.btnEqual.setOnClickListener {
@@ -96,11 +111,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.mathOperation.text.insert(binding.mathOperation.selectionStart, str)
-    }
-
-    fun roundTo(value: Double, places: Int = 10): Double {
-        val scale = 10.0.pow(places)
-        return round(value * scale) / scale
     }
 
     fun calculateExpression(): String {
