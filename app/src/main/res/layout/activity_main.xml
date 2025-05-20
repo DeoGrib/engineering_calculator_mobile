@@ -183,26 +183,31 @@
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_7"
+                android:background="@drawable/button_number_background"
                 android:text="7" />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_8"
+                android:background="@drawable/button_number_background"
                 android:text="8" />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_9"
+                android:background="@drawable/button_number_background"
                 android:text="9" />
 
             <TextView
                 style="@style/ActionButton"
                 android:id="@+id/btn_del"
+                android:background="@drawable/button_action_background"
                 android:text="DEL" />
 
             <TextView
                 style="@style/ActionButton"
                 android:id="@+id/btn_ac"
+                android:background="@drawable/button_action_background"
                 android:text="AC" />
 
         </LinearLayout>
@@ -215,26 +220,31 @@
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_4"
+                android:background="@drawable/button_number_background"
                 android:text="4" />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_5"
+                android:background="@drawable/button_number_background"
                 android:text="5" />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_6"
+                android:background="@drawable/button_number_background"
                 android:text="6" />
 
             <TextView
                 style="@style/ActionButton"
                 android:id="@+id/btn_mul"
+                android:background="@drawable/button_action_background"
                 android:text="×" />
 
             <TextView
                 style="@style/ActionButton"
                 android:id="@+id/btn_div"
+                android:background="@drawable/button_action_background"
                 android:text="÷" />
 
         </LinearLayout>
@@ -247,26 +257,31 @@
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_1"
+                android:background="@drawable/button_number_background"
                 android:text="1" />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_2"
+                android:background="@drawable/button_number_background"
                 android:text="2" />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_3"
+                android:background="@drawable/button_number_background"
                 android:text="3" />
 
             <TextView
                 style="@style/ActionButton"
                 android:id="@+id/btn_plus"
+                android:background="@drawable/button_action_background"
                 android:text="+" />
 
             <TextView
                 style="@style/ActionButton"
                 android:id="@+id/btn_minus"
+                android:background="@drawable/button_action_background"
                 android:text="-" />
 
         </LinearLayout>
@@ -279,22 +294,26 @@
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_0"
+                android:background="@drawable/button_number_background"
                 android:text="0" />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_dot"
+                android:background="@drawable/button_number_background"
                 android:text="." />
 
             <TextView
                 style="@style/NumberButton"
                 android:id="@+id/btn_x10"
+                android:background="@drawable/button_number_background"
                 android:text="Deg" />
 
             <TextView
                 style="@style/ActionButton"
                 android:layout_weight="2.02"
                 android:id="@+id/btn_equal"
+                android:background="@drawable/button_action_background"
                 android:text="=" />
 
         </LinearLayout>
