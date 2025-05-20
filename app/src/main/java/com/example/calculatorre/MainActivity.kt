@@ -67,11 +67,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnDel.setOnClickListener {
-            val str = binding.mathOperation.text.toString()
-            if (str.isNotEmpty()) {
-                binding.mathOperation.setText(str.substring(0, str.length - 1))
+            val pos = binding.mathOperation.selectionStart
+            val text = binding.mathOperation.text
+
+            if (pos > 0 && text.isNotEmpty()) {
+                text.delete(pos - 1, pos)
             }
         }
+
 
         binding.btnEqual.setOnClickListener {
             try {
@@ -84,11 +87,15 @@ class MainActivity : AppCompatActivity() {
 
     fun setTextFields(str: String) {
         val pos = binding.mathOperation.selectionStart
-        if (binding.resultText.text != "") {
-            binding.mathOperation.setText(binding.resultText.text)
+
+        if (binding.resultText.text.isNotEmpty()) {
+            val result = binding.resultText.text.toString()
+            binding.mathOperation.setText(result)
+            binding.mathOperation.setSelection(result.length)
             binding.resultText.text = ""
         }
-        binding.mathOperation.text.insert(pos, str)
+
+        binding.mathOperation.text.insert(binding.mathOperation.selectionStart, str)
     }
 
     fun roundTo(value: Double, places: Int = 10): Double {
