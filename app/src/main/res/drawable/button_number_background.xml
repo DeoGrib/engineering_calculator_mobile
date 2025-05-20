@@ -2,14 +2,25 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="#9e9e9e"/>
+            <solid android:color="#8e8e8e"/>
+            <!-- Скругление углов -->
+            <corners android:radius="8dp" />
+
+            <!-- Граница (опционально) -->
+            <stroke android:width="2dp" android:color="#383838"/>
         </shape>
     </item>
 
     <!-- Состояние по умолчанию -->
     <item>
         <shape>
-            <solid android:color="#636363"/> <!-- это обязательно -->
+            <solid android:color="#636363
+"/> <!-- это обязательно -->
+            <!-- Скругление углов -->
+            <corners android:radius="8dp" />
+
+            <!-- Граница (опционально) -->
+            <stroke android:width="2dp" android:color="#383838"/>
         </shape>
     </item>
 </selector>

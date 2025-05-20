@@ -104,7 +104,7 @@
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_e"
-                android:text="eˣ" />
+                android:text="e" />
 
         </LinearLayout>
 
