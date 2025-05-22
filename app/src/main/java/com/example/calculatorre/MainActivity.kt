@@ -142,8 +142,7 @@ class MainActivity : AppCompatActivity() {
         expression = unaryFunctionFix.replace(expression) {
             "${it.groups["func"]!!.value}(${it.groupValues[2]})"
         }
-
-        // Обработка корня n-ной степени: 3√-8 → root(3,-8)
+// Обработка корня n-ной степени: 3√-8 → root(3,-8)
         val nthRootRegex = Regex("((?:-?\\d+(?:\\.\\d*)?)|\\(-?\\d+(?:\\.\\d*)?\\))sqrt((?:-?\\d+(?:\\.\\d*)?)|\\([^()]+\\))")
         while (nthRootRegex.containsMatchIn(expression)) {
             expression = nthRootRegex.replace(expression) {
@@ -164,7 +163,6 @@ class MainActivity : AppCompatActivity() {
                 fact.toString()
             }
         }
-
         // Баланс скобок: добавляем недостающие закрывающие скобки
         val openCount = expression.count { it == '(' }
         val closeCount = expression.count { it == ')' }
@@ -195,30 +193,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Тригонометрические функции в градусах, с округлением результата
-        val trigFunctions = listOf(
+val trigFunctions = listOf(
             object : net.objecthunter.exp4j.function.Function("sin", 1) {
-                override fun apply(vararg args: Double): Double =
-                    if (isDegrees) sin(Math.toRadians(args[0])) else sin(args[0])
+                override fun apply(vararg args: Double): Double = "%.10f".format(sin(Math.toRadians(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("cos", 1) {
-                override fun apply(vararg args: Double): Double =
-                    if (isDegrees) cos(Math.toRadians(args[0])) else cos(args[0])
+                override fun apply(vararg args: Double): Double = "%.10f".format(cos(Math.toRadians(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("tan", 1) {
-                override fun apply(vararg args: Double): Double =
-                    if (isDegrees) tan(Math.toRadians(args[0])) else tan(args[0])
+                override fun apply(vararg args: Double): Double = "%.10f".format(tan(Math.toRadians(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("asin", 1) {
-                override fun apply(vararg args: Double): Double =
-                    if (isDegrees) Math.toDegrees(asin(args[0])) else asin(args[0])
+                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(asin(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("acos", 1) {
-                override fun apply(vararg args: Double): Double =
-                    if (isDegrees) Math.toDegrees(acos(args[0])) else acos(args[0])
+                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(acos(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("atan", 1) {
-                override fun apply(vararg args: Double): Double =
-                    if (isDegrees) Math.toDegrees(atan(args[0])) else atan(args[0])
+                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(atan(args[0]))).toDouble()
             }
         )
 

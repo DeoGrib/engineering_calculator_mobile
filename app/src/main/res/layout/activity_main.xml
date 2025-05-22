@@ -113,7 +113,10 @@
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_e"
+
+
                 android:background="@drawable/button_special_background"
+
                 android:text="e" />
 
         </LinearLayout>
