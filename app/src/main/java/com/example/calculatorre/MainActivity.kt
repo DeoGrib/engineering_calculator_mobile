@@ -195,24 +195,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Тригонометрические функции в градусах, с округлением результата
-val trigFunctions = listOf(
+        val trigFunctions = listOf(
             object : net.objecthunter.exp4j.function.Function("sin", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(sin(Math.toRadians(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) sin(Math.toRadians(args[0])) else sin(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("cos", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(cos(Math.toRadians(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) cos(Math.toRadians(args[0])) else cos(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("tan", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(tan(Math.toRadians(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) tan(Math.toRadians(args[0])) else tan(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("asin", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(asin(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) Math.toDegrees(asin(args[0])) else asin(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("acos", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(acos(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) Math.toDegrees(acos(args[0])) else acos(args[0])
             },
             object : net.objecthunter.exp4j.function.Function("atan", 1) {
-                override fun apply(vararg args: Double): Double = "%.10f".format(Math.toDegrees(atan(args[0]))).toDouble()
+                override fun apply(vararg args: Double): Double =
+                    if (isDegrees) Math.toDegrees(atan(args[0])) else atan(args[0])
             }
         )
 
