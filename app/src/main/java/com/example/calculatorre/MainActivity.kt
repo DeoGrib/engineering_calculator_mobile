@@ -11,6 +11,7 @@ import kotlin.math.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var isDegrees = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnDiv.setOnClickListener { setTextFields("÷") }
         binding.btnOpen.setOnClickListener { setTextFields("(") }
         binding.btnClose.setOnClickListener { setTextFields(")") }
-        binding.btnX10.setOnClickListener { setTextFields("×10^") }
         binding.btnSqr.setOnClickListener { setTextFields("^") }
         binding.btnSqr1.setOnClickListener { setTextFields("^-1") }
         binding.btnSqr2.setOnClickListener { setTextFields("^2") }
@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity() {
         binding.btnSin1.setOnClickListener { setTextFields("sin⁻¹") }
         binding.btnCos1.setOnClickListener { setTextFields("cos⁻¹") }
         binding.btnTan1.setOnClickListener { setTextFields("tan⁻¹") }
+
+        binding.btnX10.setOnClickListener {
+            isDegrees = !isDegrees
+            binding.btnX10.text = if (isDegrees) "Deg" else "Rad"
+        }
 
         binding.btnAc.setOnClickListener {
             binding.mathOperation.text.clear()
@@ -137,8 +142,7 @@ class MainActivity : AppCompatActivity() {
         expression = unaryFunctionFix.replace(expression) {
             "${it.groups["func"]!!.value}(${it.groupValues[2]})"
         }
-
-        // Обработка корня n-ной степени: 3√-8 → root(3,-8)
+// Обработка корня n-ной степени: 3√-8 → root(3,-8)
         val nthRootRegex = Regex("((?:-?\\d+(?:\\.\\d*)?)|\\(-?\\d+(?:\\.\\d*)?\\))sqrt((?:-?\\d+(?:\\.\\d*)?)|\\([^()]+\\))")
         while (nthRootRegex.containsMatchIn(expression)) {
             expression = nthRootRegex.replace(expression) {
@@ -159,7 +163,6 @@ class MainActivity : AppCompatActivity() {
                 fact.toString()
             }
         }
-
         // Баланс скобок: добавляем недостающие закрывающие скобки
         val openCount = expression.count { it == '(' }
         val closeCount = expression.count { it == ')' }
@@ -190,7 +193,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Тригонометрические функции в градусах, с округлением результата
-        val trigFunctions = listOf(
+val trigFunctions = listOf(
             object : net.objecthunter.exp4j.function.Function("sin", 1) {
                 override fun apply(vararg args: Double): Double = "%.10f".format(sin(Math.toRadians(args[0]))).toDouble()
             },

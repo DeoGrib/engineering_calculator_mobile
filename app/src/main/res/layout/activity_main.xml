@@ -49,26 +49,31 @@
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_factorial"
+                android:background="@drawable/button_special_background"
                 android:text="x!" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_radical_3"
+                android:background="@drawable/button_special_background"
                 android:text="³√" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_radical_x"
+                android:background="@drawable/button_special_background"
                 android:text="ˣ√" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_log"
+                android:background="@drawable/button_special_background"
                 android:text="log₁₀" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_ln"
+                android:background="@drawable/button_special_background"
                 android:text="ln" />
 
 
@@ -84,26 +89,34 @@
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_sqr_1"
+                android:background="@drawable/button_special_background"
                 android:text="x⁻¹" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_sqr_2"
+                android:background="@drawable/button_special_background"
                 android:text="x²" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_sqr_3"
+                android:background="@drawable/button_special_background"
                 android:text="x³" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_pi"
+                android:background="@drawable/button_special_background"
                 android:text="π" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_e"
+
+
+                android:background="@drawable/button_special_background"
+
                 android:text="e" />
 
         </LinearLayout>
@@ -117,26 +130,31 @@
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_radical"
+                android:background="@drawable/button_special_background"
                 android:text="√" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_sqr"
+                android:background="@drawable/button_special_background"
                 android:text="^" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_sin_1"
+                android:background="@drawable/button_special_background"
                 android:text="sin⁻¹" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_cos_1"
+                android:background="@drawable/button_special_background"
                 android:text="cos⁻¹" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_tan_1"
+                android:background="@drawable/button_special_background"
                 android:text="tan⁻¹" />
 
         </LinearLayout>
@@ -150,26 +168,31 @@
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_open"
+                android:background="@drawable/button_special_background"
                 android:text="(" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_close"
+                android:background="@drawable/button_special_background"
                 android:text=")" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_sin"
+                android:background="@drawable/button_special_background"
                 android:text="sin" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_cos"
+                android:background="@drawable/button_special_background"
                 android:text="cos" />
 
             <TextView
                 style="@style/SpecialButton"
                 android:id="@+id/btn_tan"
+                android:background="@drawable/button_special_background"
                 android:text="tan" />
 
         </LinearLayout>
