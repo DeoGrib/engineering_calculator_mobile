@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="#e37e44"/>
+            <!-- Скругление углов -->
+            <corners android:radius="8dp" />
+
+            <!-- Граница (опционально) -->
+            <stroke android:width="2dp" android:color="#602705"/>
+        </shape>
+    </item>
+
+    <!-- Состояние по умолчанию -->
+    <item>
+        <shape>
+            <solid android:color="#a34b18"/> <!-- это обязательно -->
+            <!-- Скругление углов -->
+            <corners android:radius="8dp" />
+
+            <!-- Граница (опционально) -->
+            <stroke android:width="2dp" android:color="#602705"/>
+        </shape>
+    </item>
+</selector>
+

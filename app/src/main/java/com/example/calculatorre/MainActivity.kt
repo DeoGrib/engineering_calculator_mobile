@@ -11,6 +11,7 @@ import kotlin.math.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var isDegrees = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnDiv.setOnClickListener { setTextFields("÷") }
         binding.btnOpen.setOnClickListener { setTextFields("(") }
         binding.btnClose.setOnClickListener { setTextFields(")") }
-        binding.btnX10.setOnClickListener { setTextFields("×10^") }
         binding.btnSqr.setOnClickListener { setTextFields("^") }
         binding.btnSqr1.setOnClickListener { setTextFields("^-1") }
         binding.btnSqr2.setOnClickListener { setTextFields("^2") }
@@ -47,14 +47,19 @@ class MainActivity : AppCompatActivity() {
         binding.btnFactorial.setOnClickListener { setTextFields("!") }
         binding.btnPi.setOnClickListener { setTextFields("π") }
         binding.btnE.setOnClickListener { setTextFields("e") }
-        binding.btnLog.setOnClickListener { setTextFields("log ") }
-        binding.btnLn.setOnClickListener { setTextFields("ln ") }
-        binding.btnSin.setOnClickListener { setTextFields("sin ") }
-        binding.btnCos.setOnClickListener { setTextFields("cos ") }
-        binding.btnTan.setOnClickListener { setTextFields("tan ") }
-        binding.btnSin1.setOnClickListener { setTextFields("sin⁻¹ ") }
-        binding.btnCos1.setOnClickListener { setTextFields("cos⁻¹ ") }
-        binding.btnTan1.setOnClickListener { setTextFields("tan⁻¹ ") }
+        binding.btnLog.setOnClickListener { setTextFields("log") }
+        binding.btnLn.setOnClickListener { setTextFields("ln") }
+        binding.btnSin.setOnClickListener { setTextFields("sin") }
+        binding.btnCos.setOnClickListener { setTextFields("cos") }
+        binding.btnTan.setOnClickListener { setTextFields("tan") }
+        binding.btnSin1.setOnClickListener { setTextFields("sin⁻¹") }
+        binding.btnCos1.setOnClickListener { setTextFields("cos⁻¹") }
+        binding.btnTan1.setOnClickListener { setTextFields("tan⁻¹") }
+
+        binding.btnX10.setOnClickListener {
+            isDegrees = !isDegrees
+            binding.btnX10.text = if (isDegrees) "Deg" else "Rad"
+        }
 
         binding.btnAc.setOnClickListener {
             binding.mathOperation.text.clear()
@@ -62,11 +67,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnDel.setOnClickListener {
-            val str = binding.mathOperation.text.toString()
-            if (str.isNotEmpty()) {
-                binding.mathOperation.setText(str.substring(0, str.length - 1))
+            val pos = binding.mathOperation.selectionStart
+            val text = binding.mathOperation.text
+
+            if (pos > 0 && text.isNotEmpty()) {
+                val input = text.toString()
+                val beforeCursor = input.substring(0, pos)
+
+                // Список функций/операций, которые нужно удалять целиком
+                val functions = listOf(
+                    "sin⁻¹", "cos⁻¹", "tan⁻¹", "log", "ln", "sin", "cos", "tan", "3√", "()√"
+                )
+
+                // Проверяем, заканчивается ли строка перед курсором на какую-либо из этих функций
+                val match = functions.firstOrNull { beforeCursor.endsWith(it) }
+
+                if (match != null) {
+                    text.delete(pos - match.length, pos)
+                } else {
+                    text.delete(pos - 1, pos)
+                }
             }
         }
+
+
 
         binding.btnEqual.setOnClickListener {
             try {
@@ -79,16 +103,15 @@ class MainActivity : AppCompatActivity() {
 
     fun setTextFields(str: String) {
         val pos = binding.mathOperation.selectionStart
-        if (binding.resultText.text != "") {
-            binding.mathOperation.setText(binding.resultText.text)
+
+        if (binding.resultText.text.isNotEmpty()) {
+            val result = binding.resultText.text.toString()
+            binding.mathOperation.setText(result)
+            binding.mathOperation.setSelection(result.length)
             binding.resultText.text = ""
         }
-        binding.mathOperation.text.insert(pos, str)
-    }
 
-    fun roundTo(value: Double, places: Int = 10): Double {
-        val scale = 10.0.pow(places)
-        return round(value * scale) / scale
+        binding.mathOperation.text.insert(binding.mathOperation.selectionStart, str)
     }
 
     fun calculateExpression(): String {
@@ -120,8 +143,7 @@ class MainActivity : AppCompatActivity() {
         expression = unaryFunctionFix.replace(expression) {
             "${it.groups["func"]!!.value}(${it.groupValues[2]})"
         }
-
-        // Обработка корня n-ной степени: 3√-8 → root(3,-8)
+// Обработка корня n-ной степени: 3√-8 → root(3,-8)
         val nthRootRegex = Regex("((?:-?\\d+(?:\\.\\d*)?)|\\(-?\\d+(?:\\.\\d*)?\\))sqrt((?:-?\\d+(?:\\.\\d*)?)|\\([^()]+\\))")
         while (nthRootRegex.containsMatchIn(expression)) {
             expression = nthRootRegex.replace(expression) {
@@ -131,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 "root($n,$radicand)"
             }
         }
-
+        
         // Обработка факториала: 5! → 120
         val factorialRegex = Regex("(\\d+(?:\\.\\d*)?)!")
         while (factorialRegex.containsMatchIn(expression)) {
@@ -140,9 +162,9 @@ class MainActivity : AppCompatActivity() {
                 if (num % 1 != 0.0) return@replace "Ошибка"
                 val fact = (1..num.toInt()).fold(1L) { acc, i -> acc * i }
                 fact.toString()
+
             }
         }
-
         // Баланс скобок: добавляем недостающие закрывающие скобки
         val openCount = expression.count { it == '(' }
         val closeCount = expression.count { it == ')' }
@@ -173,9 +195,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Тригонометрические функции в градусах, с округлением результата
-        val trigFunctions = listOf(
+val trigFunctions = listOf(
             object : net.objecthunter.exp4j.function.Function("sin", 1) {
-                override fun apply(vararg args: Double): Double = Math.sin(Math.toRadians(args[0]))
+                override fun apply(vararg args: Double): Double = "%.10f".format(sin(Math.toRadians(args[0]))).toDouble()
             },
             object : net.objecthunter.exp4j.function.Function("cos", 1) {
                 override fun apply(vararg args: Double): Double = "%.10f".format(cos(Math.toRadians(args[0]))).toDouble()
