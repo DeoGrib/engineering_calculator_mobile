@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Кнопки
         binding.btn0.setOnClickListener { setTextFields("0") }
         binding.btn1.setOnClickListener { setTextFields("1") }
         binding.btn2.setOnClickListener { setTextFields("2") }
@@ -152,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 "root($n,$radicand)"
             }
         }
-
+        
         // Обработка факториала: 5! → 120
         val factorialRegex = Regex("(\\d+(?:\\.\\d*)?)!")
         while (factorialRegex.containsMatchIn(expression)) {
@@ -161,6 +162,7 @@ class MainActivity : AppCompatActivity() {
                 if (num % 1 != 0.0) return@replace "Ошибка"
                 val fact = (1..num.toInt()).fold(1L) { acc, i -> acc * i }
                 fact.toString()
+
             }
         }
         // Баланс скобок: добавляем недостающие закрывающие скобки
